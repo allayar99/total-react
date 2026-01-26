@@ -7,7 +7,7 @@ const Todolist = () => {
   const [text, setText] = useState("");
   console.log(text);
   const addTodo = (e) => {
-    e.preventDefaulte();
+    e.preventDefault();
     const value = text.trim();
     if (!value) return;
 
@@ -17,9 +17,25 @@ const Todolist = () => {
       done: false,
     };
     setTodo((prev) => [newTodo, ...prev]);
-    setTodo("");
+    setText("");
   };
+
+  const daleteTodo = (id)=>{
+   setTodo((prev)=> prev.filter((d)=> d.id !== id));
+  }
+
+  const toggleTodo = (id) => {
+    setTodo((prev) =>
+     prev.map((data)=> data.id !== id ? {...data, done: !data.done} : data,)
+  )
+  }
+  
+  const clearAll = () => {
+    setTodo([])
+  }
+
 //   console.log(todo);
+
   return (
     <Container>
       <TodoWrapper>
@@ -32,23 +48,26 @@ const Todolist = () => {
             onChange={(e) => setText(e.target.value)}
           />
           <Button type="submit">Add</Button>
+          <Button onClick={clearAll}>Clear All</Button>
         </Form>
-        <span>Total:</span>
-        {/* <ul>
-          <div style={{ display: "flex" }}>
-            <input type="checkbox" />
-            <li>Runnuing</li>
-            <button>delete</button>
-          </div>
-        </ul> */}
+        <span>Total:{todo.length} </span>
+        <span>Done: {todo.filter((data)=> data.done).length} </span>
+        
         <ul>
           {todo.map((value, index) => {
             return (
                 <div style={{ display: "flex" }} key={value.id}>
-              <li key={value.id}>
+              <li>
+                <input type="checkbox" 
+                // checked={value.id} 
+                onChange={()=> toggleTodo(value.id)}/>
+                <span style={{
+                  flex: 1,
+                  textDecoration: value.done ? "line-through" : "none"}}>
                 {index} {value.text}{" "}
+                </span>
               </li>
-              <button>delete</button>
+              <button onClick={() => daleteTodo(value.id)}>delete</button>
               </div>
             );
           })}
